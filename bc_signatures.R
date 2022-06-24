@@ -4,6 +4,7 @@ bc_signatures <- function(database) {
     keyword <- c("Frame_Shift_Del","Frame_Shift_Ins","In_Frame_Del","In_Frame_Ins","Missense","Nonsense","Splice_Site","_True","_False")
     library(dplyr)
     library(tidyverse)
+    library(UpSetR)
 
     setwd(paste0("/rds/general/project/piel-chadeau_sickle_cell_disease/live/Copy of Original data/Phase1/sd2anon/csv/AsthmaUBIOPRED/CCLE_TCGA_SIGS","/",database))
     files <- list.files(getwd())
@@ -49,7 +50,8 @@ bc_signatures <- function(database) {
           print(files[i])
           signature <- ""
         }
-        
+       g <- upset(df2, order.by = "freq")
+        print(g)
       }
       print(files[i])
       print("-----------------------")
