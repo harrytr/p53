@@ -5,7 +5,7 @@ bc_signatures <- function(database) {
     library(dplyr)
     library(tidyverse)
 
-    setwd(paste0("/rds/general/project/piel-chadeau_sickle_cell_disease/live/Copy of Original data/Phase1/sd2anon/csv/AsthmaUBIOPRED/CCLE_TCGA_SIGS","/",database))
+    setwd(paste0("~","/",database))
     files <- list.files(getwd())
     df2  <- matrix(data = , nrow = length(keyword), ncol = 3) #
     df_final  <- matrix(data = , nrow = 0, ncol = 3) #
