@@ -1,6 +1,6 @@
 meta_sig <- function()
 {
-  setwd("/rds/general/project/piel-chadeau_sickle_cell_disease/live/Copy of Original data/Phase1/sd2anon/csv/AsthmaUBIOPRED/CCLE_TCGA_SIGS/meta-sigs")
+  setwd("~/CCLE_TCGA_SIGS/meta-sigs")
   df <- as.data.frame(read.csv("CCLE_Frame_Shift_Del_signatures.csv"), header = TRUE)
   print(df$Signature)
   df <- df %>% dplyr::filter(!is.na(df$Signature))
