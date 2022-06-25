@@ -8,7 +8,7 @@ bc_signatures_single <- function(database) {
   library(tidyverse)
   library(UpSetR)
   
-  setwd(paste0("/rds/general/project/piel-chadeau_sickle_cell_disease/live/Copy of Original data/Phase1/sd2anon/csv/AsthmaUBIOPRED/CCLE_TCGA_SIGS","/",database))
+  setwd(paste0("~","/",database))
   files <- list.files(getwd())
   df2  <- matrix(data = , nrow = 1, ncol = 3) #
   df_final  <- matrix(data = , nrow = 0, ncol = 3) #
@@ -60,7 +60,7 @@ bc_signatures_single <- function(database) {
     df_final <- rbind(df_final,df2)
     
   }
-  setwd("/rds/general/project/piel-chadeau_sickle_cell_disease/live/Copy of Original data/Phase1/sd2anon/csv/AsthmaUBIOPRED/CCLE_TCGA_SIGS/meta-sigs")
+  setwd("~/CCLE_TCGA_SIGS/meta-sigs")
   write.csv(df_final,paste0(database,"_",keyword[single],"_signatures.csv"))
   
   return()
