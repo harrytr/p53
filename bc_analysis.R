@@ -6,7 +6,7 @@ bc_analysis <- function(database) {
   
 
   
-  setwd(paste0("/Users/ctrianta/Documents/shinyapp_2022/centrality/",database))
+  setwd(paste0("~",database))
   files <- list.files(getwd())
   df2 <- matrix(data = , nrow = length(files), ncol = length(keyword)) #
   colnames(df2) <- keyword
