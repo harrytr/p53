@@ -260,14 +260,29 @@ Carnival_opt <-function(iterator_index,df_EM,
       
       gg <- g
       V(gg)$name <-sapply(strsplit(as.character(V(gg)$name), split=' [', fixed=TRUE),function(x) (x[1]))
-      # calculate vertex betweeness centrality:
-      temp_vertex <- which.max(igraph::betweenness(gg))
-      #print("Top gene for betweenness centrality:")
-      #print(temp_vertex)
+      #########SPLIT ACROSS COMMUNITIES AND GET CENTRALITY FOR EACH SUBGRAPH AS SIGNATURE
+      sub_graphs <- c()
+      sub_objects <- c()
+      unique_communities <- unique(V(gg)$community)
+      temp_vertex <- c()
+      for (ie in 1: length(unique_communities)){
+        print(paste0("Community :", as.character(ie)))
+        OV <- which(V(gg)$community == unique_communities[ie])
+        g_subgraph_temp <- induced_subgraph(gg, OV)
+        temp_vertex0 <- which.max(igraph::betweenness(g_subgraph_temp))
+        print("Best centrality:")
+        print(temp_vertex0)
+        temp_vertex <- c(temp_vertex,names(temp_vertex0))
+        #  readline(prompt="Press [enter] to continue")
+      }
+      signature <- paste(temp_vertex, collapse = '_') # signature
+      print("Signature: ")
+      print(signature)
+      #readline(prompt="Press [enter] to continue")
+      #########SPLIT ACROSS COMMUNITIES AND GET CENTRALITY FOR EACH SUBGRAPH AS SIGNATURE
+      
       top_bc_network <-  c(top_bc_network, paste0(names(tfList)[i]))
-      top_bc_vertex <- c(top_bc_vertex,temp_vertex)
-      
-      
+      top_bc_vertex <- c(top_bc_vertex,signature)
       nodes <- data.frame(id =  V(g)$name,
                           group = V(g)$community,
                           label = V(g)$label,
