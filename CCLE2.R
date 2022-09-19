@@ -137,7 +137,7 @@ CCLE2 <-function(disease_name,
     # reading CRISPR data:
     gene_effect <- as.data.frame(read.csv(paste0(inputs_dir,"/",new_version_folder,"/Achilles_gene_effect.csv"), header=TRUE))
     common_essentials <- as.data.frame(read.csv(paste0(inputs_dir,"/",new_version_folder,"/Achilles_common_essentials.csv"), header=TRUE))
-    gene_dep <- as.data.frame(read.csv(paste0(inputs_dir,"/",new_version_folder,"/Achilles_gene_dependency.csv"), header=TRUE))
+    gene_dep <- as.data.frame(read.csv(paste0(inputs_dir,"/",new_version_folder,"/CRISPR_gene_dependency.csv"), header=TRUE))
     
     
     save(gene_effect,
@@ -193,8 +193,8 @@ CCLE2 <-function(disease_name,
   print("Loading libraries required...")
   list.of.packages <- c("devtools","dplyr","ggplot2","ggrepel","ggpubr","viridis","tibble","stringr",
                         "corrplot","tidyverse","igraph","visNetwork", "data.table", "CARNIVAL",
-                        "viper", "CellNOptR","edgeR", "OmnipathR", "stringi","openxlsx","samr",
-                        "sna", "gplots","ggfortify","limma", "UpSetR","survival", "survminer","ggcorrplot")
+                        "viper", "CellNOptR", "OmnipathR", "stringi","openxlsx",
+                        "sna", "gplots","ggfortify","limma", "UpSetR","survival", "survminer","ggcorrplot")# "edgeR",
   
   invisible(lapply(list.of.packages, library, character.only = TRUE))
   
@@ -377,7 +377,7 @@ CCLE2 <-function(disease_name,
     print(paste0("Filtering the expression profiles in ",disease_filename[j]))
     
     ############################################################################################################
-    filtered_RPPA <- RPPA  %>%   filter(stringr::str_detect(disease, "_BREAST"))
+    filtered_RPPA <- RPPA  %>%   dplyr::filter(stringr::str_detect(disease, "_BREAST"))
     
     filtered_expression_matrix <- expr_matrix_csv  %>%  dplyr::filter(CELLLINE %in% disease_cell_lines)
     filtered_expression_matrix_disease <- filtered_expression_matrix
@@ -428,7 +428,7 @@ CCLE2 <-function(disease_name,
     
     skip_C = FALSE
     # we now filter only for the genes that also belong to our GRN
-    filtered_mutation_matrix <- filtered_mutation_matrix %>% filter(stringr::str_detect(Hugo_Symbol, exact_genes))
+    filtered_mutation_matrix <- filtered_mutation_matrix %>% dplyr::filter(stringr::str_detect(Hugo_Symbol, exact_genes))
     if (!(violin_gene %in% filtered_mutation_matrix$Hugo_Symbol)) {
       print(paste0("No mutation data found for ", violin_gene, "!"))
       skip_C = TRUE
@@ -630,7 +630,7 @@ CCLE2 <-function(disease_name,
                                                                       !(Variant_Classification %in% "Silent") &
                                                                       !(isDeleterious %in% "False"))
     
-    filtered_mutation_matrix_DL <- filtered_mutation_matrix_DL %>% filter(stringr::str_detect(Hugo_Symbol, exact_genes))
+    filtered_mutation_matrix_DL <- filtered_mutation_matrix_DL %>% dplyr::filter(stringr::str_detect(Hugo_Symbol, exact_genes))
     
     
     grouped_mutations <-  filtered_mutation_matrix %>% dplyr::group_by(Hugo_Symbol, Variant_Classification)
