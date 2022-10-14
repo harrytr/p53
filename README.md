@@ -16,6 +16,6 @@ In the current version, the emphasis was given in analysing gene TP53. If the us
 
 
 ### References
-Triantafyllidis, C.P. , Alessandro Barberis, Ana Miar Cuervo, Philip Charlton, Fiona Hartley, Linda
-Van Bijsterveldt, Enio Gjerga, Julio Saez Rodriguez and Francesca M. Buffa, Reconstructing the functional
+Triantafyllidis, C.P. , Alessandro Barberis, Ana Miar Cuervo, Enio Gjerga,  Philip Charlton, Fiona Hartley, Linda
+Van Bijsterveldt, Julio Saez Rodriguez and Francesca M. Buffa, Reconstructing the functional
 effect of TP53 somatic mutations on its regulon using causal gene network modelling, 2022.
