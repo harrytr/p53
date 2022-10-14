@@ -1,7 +1,5 @@
 ## Data Analysis and Optimization for CCLE and TCGA databases platform.
 
-This platform has been developed in the department of Oncology, University of Oxford 2019-2021. 
-
 It facilitates data analysis for the well known databases CCLE and TCGA with two main avenues of modelling schemes implemented:
 
 * GLM with ReNoiR (Generalized Linear Regression models)
