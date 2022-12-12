@@ -4,9 +4,10 @@ bc_analysis <- function(database) {
   library(dplyr)
   library(tidyverse)
   
-
   
-  setwd(paste0("~",database))
+  setwd("C:/Users/Harry/OneDrive - University of Greenwich/Desktop/RESULTS/CENTRALITY_PREPROCESS")
+  setwd(paste0(getwd(),"/",database))
+  
   files <- list.files(getwd())
   df2 <- matrix(data = , nrow = length(files), ncol = length(keyword)) #
   colnames(df2) <- keyword
@@ -19,26 +20,30 @@ bc_analysis <- function(database) {
     
     files <- sapply(strsplit(as.character(files), split='_', fixed=TRUE),function(x) (x[3]))
   }
-    
-    else
-    {
-  files <- sapply(strsplit(as.character(files), split='_', fixed=TRUE),function(x) (paste0(x[3],"_",x[4])))
   
-    }
+  else
+  {
+    files <- sapply(strsplit(as.character(files), split='_', fixed=TRUE),function(x) (paste0(x[3],"_",x[4])))
+    
+  }
   files <- sapply(strsplit(as.character(files), split='.', fixed=TRUE),function(x) (x[1]))
   disease <- c()
-
+  
   for (i in 1:length(files)) {
     print(files[i])
     for (j in 1:length(keyword)) {
+      print(keyword[j])
       temp_name <- files[i]
       
       df <- as.data.frame(read.csv(files_bkp[i]), header = TRUE)
-      colnames(df)[1] <- "central_gene"
       
+      colnames(df)[1] <- "central_gene"
       df <- df  %>%  dplyr:: filter(str_detect(df$top_bc_network ,keyword[j])==TRUE)
-
+      print(df)
       central_gene <- which.max(table(df$central_gene))
+      print(table(df$central_gene))
+      print(central_gene)
+      Sys.sleep(5)
       central_gene <- names(central_gene)
       print(central_gene)
       if (is.null(central_gene)) {central_gene <- "-"}
@@ -49,7 +54,7 @@ bc_analysis <- function(database) {
   df_final <- cbind(disease,df2)
   #print(df_final)
   colnames(df_final)[1] <- paste0(database)
- # write.csv(df_final,paste0("/Users/ctrianta/Desktop/centrality/centrality_genes_",database,".csv"))
+  write.csv(df_final,paste0("C:/Users/Harry/OneDrive - University of Greenwich/Desktop/RESULTS/CENTRALITY_PREPROCESS/",database, database,".csv"))
   unique_genes <- c()
   
   for (i in 2: ncol(df_final)) {

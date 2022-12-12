@@ -109,7 +109,6 @@ MNR <-function(regression_data,perm,disease_filename, reg_type, resDir, screenin
     #Check which is Missense Mutation
     # index = which(dataY == "Missense_Mutation")
     #Create the Y
-    
     dataY = ifelse(stringr::str_detect(dataY,key),1,0)
     #dataY = ifelse(dataY %in% key , yes = 1, no = 0)
     
@@ -118,7 +117,6 @@ MNR <-function(regression_data,perm,disease_filename, reg_type, resDir, screenin
     
     #Update x
     dataX = dataX[names(dataY),,drop=F]
-    
     
   } else if(identical(analysis.type, "multinomial")){
     #Response type
@@ -165,7 +163,7 @@ MNR <-function(regression_data,perm,disease_filename, reg_type, resDir, screenin
   # NEW SET UP
   #-------------------------------------------------------------------------------#
   #learning method
-  learning.method.id = "randomForest"
+  learning.method.id = 'randomForest'
   
   #sampling for tuning
   sampling.method.id.tuning = "cv"
@@ -287,7 +285,7 @@ MNR <-function(regression_data,perm,disease_filename, reg_type, resDir, screenin
     logger    = Logger(path = file.path(resDir, "log.txt"), level = "ALL", verbose = T),
     
     #Data for training
-    hyperparameters = get_hp(id = learning.method.id, y = y),
+    hyperparameters = get_hp(id = learning.method.id, y = dataY),
     x         = dataX,
     y         = dataY,
     weights   = NULL,

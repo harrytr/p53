@@ -1,14 +1,17 @@
-bc_signatures_single <- function(database) {
+bc_signatures_single <- function(database,single) {
   
   
-  #keyword <- c("Frame_Shift_Del","Frame_Shift_Ins","In_Frame_Del","In_Frame_Ins","Missense","Nonsense","Splice_Site","_True","_False")
-  keyword <- c("In_Frame_Del")
-  single <- 1
+  keywords <- c("Frame_Shift_Del","Frame_Shift_Ins","In_Frame_Del","In_Frame_Ins","Missense","Nonsense","Splice_Site","_True","_False")
+  keyword <- c(keywords[single])
+
+
+  #single <- 1
   library(dplyr)
   library(tidyverse)
   library(UpSetR)
   
-  setwd(paste0("~","/",database))
+  setwd("C:/Users/Harry/OneDrive - University of Greenwich/Desktop/RESULTS/CENTRALITY_PREPROCESS")
+  setwd(paste0(getwd(),"/",database))
   files <- list.files(getwd())
   df2  <- matrix(data = , nrow = 1, ncol = 3) #
   df_final  <- matrix(data = , nrow = 0, ncol = 3) #
@@ -53,15 +56,28 @@ bc_signatures_single <- function(database) {
         signature <- ""
       }
       #g <- upset(df2, order.by = "freq")
-      print(g)
+      #print(g)
     }
     print(files[i])
     print("-----------------------")
     df_final <- rbind(df_final,df2)
     
   }
-  setwd("~/CCLE_TCGA_SIGS/meta-sigs")
-  write.csv(df_final,paste0(database,"_",keyword[single],"_signatures.csv"))
+  setwd(paste0("C:/Users/Harry/OneDrive - University of Greenwich/Desktop/RESULTS/CENTRALITY_PREPROCESS/meta-sigs/",database))
+  df_final <- as.data.frame(df_final)
+  df_final <- df_final %>% dplyr::filter(Signature != "NA")
+  write.csv(df_final,paste0(database,"_",keywords[single],"_signatures.csv"))
   
-  return()
+    
+  signature <- (paste(df_final[,3], collapse = ","))
+  temp1 <- sapply(str_split(signature,","),function(x) ((x)))
+  signature <- as.list(temp1)
+  print(length(signature))
+  signature <- unique(signature)
+  print(length(signature))
+  signature <- list(signature)
+ 
+  write.csv(signature,paste0(keywords[single],".csv"))
+ 
+  return(signature)
 }

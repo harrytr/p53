@@ -77,7 +77,7 @@ prepare_Carnival <- function(mapk_data,
     write.csv(mapk_data_carnival,"Carnival_EM.csv")
     df_EM <- df_EM[,-1]
     
-   # Carnival_opt_res <- Carnival_opt_HYPOXIA(df_EM,
+  #  Carnival_opt_res <- Carnival_opt_RAD(df_EM,
   #                                       results_dir,
   #                                       inputs_dir,
   #                                       disease_filename[j],
@@ -397,9 +397,9 @@ prepare_Carnival <- function(mapk_data,
 
         try(glregression <- MNR("regression.rds", 50, "TCGA",
                                 reg_type, resDir, "alternative",key))
+        stop()
         
       }
-      
       if (carnival_flag == TRUE) {
         
         

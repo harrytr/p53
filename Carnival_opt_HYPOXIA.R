@@ -16,7 +16,7 @@ Carnival_opt_HYPOXIA <-function(df_EM,
   
   library(dorothea)
   library(progeny)
-  
+  cplex_path <- "C:/Program Files/IBM/ILOG/CPLEX_Studio221/cplex/bin/x64_win64/"
   #  PREPARE CARNIVAL INPUT FILES:
   print("Hypoxia data optimization...")
   
@@ -24,7 +24,7 @@ Carnival_opt_HYPOXIA <-function(df_EM,
   print("Preparing the viper regulon list...")
 
   #df_EM<- as.data.frame(read.csv(paste0(inputs_dir,"/RNA_hypoxia_1.csv")),header=TRUE)
-  df_EM<- read.table(paste0(inputs_dir,"/RNA_hypoxia_1.txt"),header=TRUE,sep="\t",row.names=2)
+  df_EM<- read.table(paste0(inputs_dir,"/RNA_hypoxia_2.txt"),header=TRUE,sep="\t",row.names=2)
   df_EM <- df_EM[,-1]
   print(paste0("Standarizing Expression Matrix for the regulons of ", violin_gene, " ..."))
   #df_EM <- data.matrix(df_EM)
@@ -112,12 +112,20 @@ Carnival_opt_HYPOXIA <-function(df_EM,
   save(input_df_i, file="inputs_i.RData")
   save(input_df_a, file="inputs_a.RData")
   
+  load(file = paste0(inputs_dir,"/dorothea_hs_pancancer.RData"))
+  dorothea_hs_pancancer <- dorothea_hs_pancancer %>% dplyr::filter(confidence %in% c("A","B","C"))
+  print("Calculating TF activities...")
+  TF_activities  = as.data.frame(dorothea::run_viper(df_EM, dorothea_hs_pancancer,
+                                                     options = list(method = "none", minsize = 1,  nes = T,
+                                                                    eset.filter = FALSE, cores = 1,
+                                                                    verbose = T)))
+  
   #save(df_EM, file = "toy.RData")
-  print(df_EM)
-  TF_activities = as.data.frame(viper::viper(eset = df_EM, 
-                                             regulon = regulon_A_B_C_D_E, nes = T, 
-                                             method = 'none', minsize = 4, 
-                                             eset.filter = F)) ##estimating tf activities with viper
+  #print(df_EM)
+  #TF_activities = as.data.frame(viper::viper(eset = df_EM, 
+  #                                           regulon = regulon_A_B_C_D_E, nes = T, 
+  #                                           method = 'none', minsize = 4, 
+  #                                           eset.filter = F)) ##estimating tf activities with viper
   
   
   print("Saving the regulon activities from Viper/DoRothEA...")
@@ -177,7 +185,7 @@ Carnival_opt_HYPOXIA <-function(df_EM,
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_i, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             # timelimit = 3600, threads = cpu_threads))
           )
@@ -190,7 +198,7 @@ Carnival_opt_HYPOXIA <-function(df_EM,
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_a, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             #timelimit = 3600, threads = cpu_threads))

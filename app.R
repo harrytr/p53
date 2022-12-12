@@ -4,7 +4,8 @@ options(warn=-1)
 # p.R175H,p.R248Q,p.R273H,p.R248W, p.R273C, p.R282W, p.G245S
 # R175H,R248Q,R273H,R248W,R273C,R282W,G245S
 #p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S
-
+# R175H|R248Q|R273H|R248W|R273C|R282W|G245S
+  
 print("Loading libraries required...")
 list.of.packages <- c("shiny","shinyWidgets","shinyjs","igraph","stringr", "dplyr")
 invisible(lapply(list.of.packages, library, character.only = TRUE))
@@ -16,7 +17,6 @@ source(paste0(working_directory,'//CCLE2.R'))
 inputs_dir = paste0(working_directory,"//inputs")
 TCGA_TP53_mutations <- as.data.frame(read.table(file = paste0(inputs_dir,"/TCGA_mutations.tsv"), sep = '\t', header = TRUE))
 #TCGA_disease <- unique(TCGA_TP53_mutations$Cancer_Type)
-
 
 TCGA_types <- as.data.frame(read.table(file = paste0(inputs_dir,"/subtype.txt"), sep = '\t', header = TRUE))
 subtypes <- sort(unique(TCGA_types$Subtype))
@@ -49,7 +49,7 @@ ui <- fluidPage(
     gradient = "linear",
     direction = "right"
   ),
-  titlePanel("CCLE & TCGA Data Analysis Tool 2021 v.1.0"),
+  titlePanel("CCLE & TCGA Data Analysis Tool 2022 v.2.0"),
   sidebarLayout(
     sidebarPanel( 
       actionButton("run_ccle", "RUN", icon("play"), 
@@ -64,25 +64,25 @@ ui <- fluidPage(
       selectInput('selectfile','Select disease from CCLE:',choice = tools::file_path_sans_ext(list.files('./inputs/CELL_LINES/')),selected = "TNBC"),
       radioButtons(inputId="choice", label="Cell line dataset selection:", 
                    choices=list("Run only for the selected disease" = 1, "Run for all cancer cell line samples in single run" = 2, 
-                                "Run for all cancer types (cell line .csv files)" = 3),selected = 1),
+                                "Run for all cancer types (cell line .csv files)" = 3),selected = 2),
       
       tags$hr(style="border-color: blue;"),
-      checkboxInput("CARNIVAL_flag", label = "Run CARNIVAL optimization", TRUE),
+      checkboxInput("CARNIVAL_flag", label = "Run CARNIVAL optimization", FALSE),
       textInput("top", "Number of top measurements from Dorothea to use (0 = all):", 0),
       checkboxInput("FEM_flag", label = "Use whole expression matrix?", FALSE),
       checkboxInput("FC_flag", label = "Use fold-change (WT control) in expression input?", FALSE),
-      textInput("milp_gap", "CPLEX MILP OPTIMALITY GAP:", 0),
-      textInput("cpu", "Number of threads to use with CPLEX:", 8),
+      textInput("milp_gap", "CPLEX MILP OPTIMALITY GAP:", 0.05),
+      textInput("cpu", "Number of threads to use with CPLEX:", 2),
       textInput("score_user", "Set cut-off similarity score to save networks [0-1]:", 0.8),
-      textInput("hotspots_user", "Input the mutation hotspots (protein change, watch naming as different in CCLE/TCGA):", "p.R175H,p.R248Q,p.R273H,p.R248W, p.R273C, p.R282W, p.G245S"),
+      textInput("hotspots_user", "Input the mutation hotspots (protein change, watch naming as different in CCLE/TCGA):", "p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S"),
       tags$hr(style="border-color: blue;"),
-      checkboxInput("GLM_flag", label = "Perform Generalized Linear Regression", FALSE),
+      checkboxInput("GLM_flag", label = "Perform Generalized Linear Regression", TRUE),
       radioButtons(inputId="GLM", label="GLM options:", 
                    choices=list("Run Binomial Regression" = 1,"Run Multinomial Regression" = 2),selected = 1),
       
-      textInput("choice3", "Enter binomial keyword to classify:", "Missense"),
+      textInput("choice3", "Enter binomial keyword to classify:", "p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S"),
       checkboxInput("GLM_predict", label = "Use previous best model to predict (no training)", FALSE),
-      checkboxInput("GLM_all_u", label = "Use all genes for GLM", TRUE),
+      checkboxInput("GLM_all_u", label = "Use all genes for GLM", FALSE),
       tags$hr(style="border-color: blue;")
       
       

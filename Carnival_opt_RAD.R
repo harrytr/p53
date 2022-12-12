@@ -16,7 +16,7 @@ Carnival_opt_RAD <-function(df_EM,
   
   library(dorothea)
   library(progeny)
-  
+  cplex_path <- "C:/Program Files/IBM/ILOG/CPLEX_Studio221/cplex/bin/x64_win64/"
   #  PREPARE CARNIVAL INPUT FILES:
   print("Radiation data optimization...")
   #invisible(readline(prompt="Press [enter] to continue"))
@@ -102,8 +102,8 @@ Carnival_opt_RAD <-function(df_EM,
   
   setwd(paste0(results_dir,"/measurements"))
   save(network, file="network.RData")
-  tp_input_i <- NaN
-  tp_input_a <- NaN
+  tp_input_i <- -1
+  tp_input_a <- 1
   input_df_i  <- as.data.frame(tp_input_i)
   input_df_a  <- as.data.frame(tp_input_a)
   colnames(input_df_i) <- violin_gene
@@ -111,12 +111,21 @@ Carnival_opt_RAD <-function(df_EM,
   save(input_df_i, file="inputs_i.RData")
   save(input_df_a, file="inputs_a.RData")
   
+  
+  
+  load(file = paste0(inputs_dir,"/dorothea_hs_pancancer.RData"))
+  dorothea_hs_pancancer <- dorothea_hs_pancancer %>% dplyr::filter(confidence %in% c("A","B","C"))
+  print("Calculating TF activities...")
+  TF_activities  = as.data.frame(dorothea::run_viper(df_EM, dorothea_hs_pancancer,
+                                                     options = list(method = "none", minsize = 4,  nes = T,
+                                                                    eset.filter = FALSE, cores = 1,
+                                                                    verbose = T)))
   #save(df_EM, file = "toy.RData")
-  print(df_EM)
-  TF_activities = as.data.frame(viper::viper(eset = df_EM, 
-                                             regulon = regulon_A_B_C_D_E, nes = T, 
-                                             method = 'none', minsize = 4, 
-                                             eset.filter = F)) ##estimating tf activities with viper
+  #print(df_EM)
+  #TF_activities = as.data.frame(viper::viper(eset = df_EM, 
+  #                                           regulon = regulon_A_B_C_D_E, nes = T, 
+  #                                           method = 'none', minsize = 4, 
+  #                                           eset.filter = F)) ##estimating tf activities with viper
   
   
   print("Saving the regulon activities from Viper/DoRothEA...")
@@ -155,11 +164,11 @@ Carnival_opt_RAD <-function(df_EM,
   top_similar_score <- c()
   
   total_Bar <- length(tfList)
-  pb <- progress_bar$new(total = total_Bar)
+  #pb <- progress_bar$new(total = total_Bar)
  # pb <- winProgressBar(title = "progress bar", min = 0,max = length(tfList),width = 300)
   for (ii in 1: length(tfList)){
   #  setWinProgressBar(pb,ii,title = paste0(round(ii / length(tfList) * 100, 0),  paste0("% Optimizing networks in ",disease_filename_j)))
-    pb$tick()
+    #pb$tick()
     Sys.sleep(1 / total_Bar)
     temp_dir <- paste0(carnival_path, "/", names(tfList)[ii])
     dir.create(path = temp_dir)
@@ -172,20 +181,22 @@ Carnival_opt_RAD <-function(df_EM,
     # 
     #final_input_s <- str_split(names(tfList)[ii], "_")
 
-    final_input <- ifelse(str_detect(names(tfList)[ii],"H460_0_"), TRUE, FALSE)
+    final_input <- ifelse(str_detect(names(tfList)[ii],"_H460_0_"), TRUE, FALSE)
     
     setwd(temp_dir)
     print(temp_dir)
     if(length(list.files(temp_dir)) ==0){
       if (!(is.null(final_input) )){
         if (final_input == TRUE) {
+          print(names(tfList)[ii])
           print(paste0(violin_gene," knockdown..."))
+          Sys.sleep(2)
           try(
             
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_i, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                              dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                              dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             # timelimit = 3600, threads = cpu_threads))
           )
@@ -198,7 +209,7 @@ Carnival_opt_RAD <-function(df_EM,
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_a, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             #timelimit = 3600, threads = cpu_threads))
@@ -317,16 +328,18 @@ Carnival_opt_RAD <-function(df_EM,
           str_detect(names(tfList)[i],"H460_50B")
           str_detect(names(tfList)[jj],"H460_50B")
           
-          graph_heatmap_ID[i,jj] <- ifelse(str_detect(names(tfList)[i],"H460_50B")
-                                               && str_detect(names(tfList)[jj],"H460_50B") || str_detect(names(tfList)[i],"H460_60A")
+        graph_heatmap_ID[i,jj] <- ifelse(str_detect(names(tfList)[i],"H460_50B")
+                                             && str_detect(names(tfList)[jj],"H460_50B") || str_detect(names(tfList)[i],"H460_60A")
                                                                                        && str_detect(names(tfList)[jj],"H460_60A"),1,0)
 
 
-          graph_heatmap_DEL[i,jj] <- ifelse(str_detect(names(tfList)[i],"_H460_0_") == TRUE && str_detect(names(tfList)[jj],"_H460_0_") == FALSE,1,0)
+        graph_heatmap_DEL[i,jj] <- ifelse(str_detect(names(tfList)[i],"_H460_0_") == TRUE && str_detect(names(tfList)[jj],"_H460_0_") == FALSE,1,0)
           
-          graph_heatmap_hotspot[i,jj] <- ifelse(str_detect(names(tfList)[i],"PARENT")
+        graph_heatmap_hotspot[i,jj] <- ifelse(str_detect(names(tfList)[i],"PARENT")
                                                 && str_detect(names(tfList)[jj],"PARENT") || str_detect(names(tfList)[i],"RESISTANT")
                                                 && str_detect(names(tfList)[jj],"RESISTANT"),1,0)
+          
+          
         }
         else 
         {

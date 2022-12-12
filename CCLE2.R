@@ -191,7 +191,7 @@ CCLE2 <-function(disease_name,
   .libPaths( c( lib_dir , .libPaths() ) )
   
   print("Loading libraries required...")
-  list.of.packages <- c("devtools","dplyr","ggplot2","ggrepel","ggpubr","viridis","tibble","stringr",
+  list.of.packages <- c("dplyr","ggplot2","ggrepel","ggpubr","viridis","tibble","stringr",
                         "corrplot","tidyverse","igraph","visNetwork", "data.table", "CARNIVAL",
                         "viper", "CellNOptR", "OmnipathR", "stringi","openxlsx",
                         "sna", "gplots","ggfortify","limma", "UpSetR","survival", "survminer","ggcorrplot")# "edgeR",

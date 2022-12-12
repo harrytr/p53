@@ -16,8 +16,9 @@ Carnival_opt <-function(iterator_index,df_EM,
   library(progress)
   library(dorothea)
   library(progeny)
-  cplex_path = "/Applications/CPLEX_Studio201/cplex/bin/x86-64_osx/cplex"
+  #cplex_path = "/Applications/CPLEX_Studio221/cplex/bin/x86-64_osx/cplex"
   #cplex_path = "C:/Program Files/IBM/ILOG/CPLEX_Studio129/cplex/bin/x64_win64"
+  cplex_path <- "C:/Program Files/IBM/ILOG/CPLEX_Studio221/cplex/bin/x64_win64/"
   #  PREPARE CARNIVAL INPUT FILES:
   print("Preparing the viper regulon list...")
   write.csv(cloned,"cloned.csv")
@@ -115,10 +116,19 @@ Carnival_opt <-function(iterator_index,df_EM,
   save(input_df_i, file="inputs_i.RData")
   save(input_df_a, file="inputs_a.RData")
   
-  TF_activities = as.data.frame(viper::viper(eset = df_EM, 
-                                             regulon = regulon_A_B_C, nes = T, 
-                                             method = 'none', minsize = 4, 
-                                             eset.filter = F)) ##estimating tf activities with viper
+  
+  load(file = paste0(inputs_dir,"/dorothea_hs_pancancer.RData"))
+  dorothea_hs_pancancer <- dorothea_hs_pancancer %>% dplyr::filter(confidence %in% c("A","B","C"))
+  print("Calculating TF activities...")
+  TF_activities  = as.data.frame(dorothea::run_viper(df_EM, dorothea_hs_pancancer,
+                                                     options = list(method = "none", minsize = 1,  nes = T,
+                                                                    eset.filter = FALSE, cores = 1,
+                                                                    verbose = T)))
+  
+ # TF_activities = as.data.frame(viper::viper(eset = df_EM, 
+  #                                           regulon = regulon_A_B_C, nes = T, 
+   #                                          method = 'none', minsize = 4, 
+    #                                         eset.filter = F)) ##estimating tf activities with viper
   
   
   print("Saving the regulon activities from Viper/DoRothEA...")
@@ -184,7 +194,7 @@ Carnival_opt <-function(iterator_index,df_EM,
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_i, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             # timelimit = 3600, threads = cpu_threads))
           )
@@ -197,7 +207,7 @@ Carnival_opt <-function(iterator_index,df_EM,
             #invisible(readline(prompt="Press [enter] to continue"))
             res <- runCARNIVAL(inputObj = input_df_a, measObj = tfList[[ii]], netObj = network,weightObj = weightObj[[ii]],
                                solverPath = cplex_path , solver = "cplex",
-                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads)
+                               dir_name = temp_dir, mipGAP = GAP, threads = cpu_threads,limitPop = 10, poolCap = 10)
             
             #poolrelGAP = 0, mipGAP = GAP, poolIntensity = 1, poolReplace = 2, limitPop = 10, poolCap = 10,
             #timelimit = 3600, threads = cpu_threads))
@@ -356,10 +366,10 @@ Carnival_opt <-function(iterator_index,df_EM,
             #starts <- abs(cloned$Start_position[i] -cloned$Start_position[jj])
             #ends <- abs(cloned$End_position[i] -cloned$End_position[jj])
             #graph_heatmap_ID[i,jj] <- ifelse( starts <= 12 & ends <= 12,1,0) # binary comparison
-           # graph_heatmap_DEL[i,jj] <- ifelse(cloned$isDeleterious[i] == cloned$isDeleterious[jj],1,0) # binary comparison / check if deleterious or not
-            graph_heatmap_DEL[i,jj] <- ifelse(cloned$isDeleterious[i] == cloned$isDeleterious[jj],1,0)
+            graph_heatmap_DEL[i,jj] <- ifelse(cloned$isDeleterious[i] == cloned$isDeleterious[jj],1,0) # binary comparison / check if deleterious or not
+           # graph_heatmap_DEL[i,jj] <- ifelse(cloned$isDeleterious[i] != cloned$isDeleterious[jj],1,0)
             
-            #graph_heatmap_hotspot[i,jj] <- ifelse(cloned$Protein_Change[i] %in% hotspots & cloned$Protein_Change[jj] %in% hotspots,1,0)
+            #graph_heatmap_hotspot[i,jj] <- ifelse(cloned$Protein_Change[i] == cloned$Protein_Change[jj],1,0)
             graph_heatmap_hotspot[i,jj] <- ifelse(cloned$Protein_Change[i] %in% hotspots & cloned$Protein_Change[jj] %in% hotspots,1,0)
             
           }
