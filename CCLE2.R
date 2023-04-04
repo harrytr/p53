@@ -248,7 +248,8 @@ CCLE2 <-function(disease_name,
   # first get the path for the csv that contains the regulons
   
   # tp53 sig from CELL REPORTS   https://doi.org/10.1016/j.celrep.2019.07.001
-  tp53_sig <- c("CDC20","CENPA","KIF2C","PLK1") # CDC20,CENPA,KIF2C,PLK1
+  tp53_sig <- c("CDC20","CENPA","KIF2C","PLK1") # 
+  
   #tp53_sig <-c ()
   pnas_sig <- c()
   #pnas_sig <- c("MYBL2", "TFF1", "BRRN1",
@@ -606,20 +607,45 @@ CCLE2 <-function(disease_name,
       
       write.csv(t_heat_clust,paste0(results_dir,"/Clustering_data.csv"))
       
-      dend <-  heatmap.2(data.matrix(t_heat_clust), scale = "column",col=bluered(100), breaks=seq(-3, 3, length.out=101),
-                         keysize = 1,
-                         trace = "none", density.info = "none", 
-                         key.title = "Log2 expression",
-                         main = "Expression (Log2 Z-transformed) for the regulons VS mutation type",
-                         xlab = paste0("Regulons of ", violin_gene, " in ", disease_filename[j]), 
-                         font.lab = 20,ylab = NULL, margins = c(6,24))
+
+      t_heat_clust <- t_heat_clust[ order(row.names(t_heat_clust)), ]  
+      png(file = "CCLE_HEATMAP.png",width = 3840, height = 2160)
       
-      # dend_2 <- heatmap(data.matrix(t_heat_clust), col = rev(rainbow(10)),RowSideColors = cc1, ColSideColors = cc2, 
-      #                   xlab = paste0("Regulons of ", violin_gene, " in ", disease_filename[j]), ylab = NULL, margins = c(8, 5),
-      #                   main = "Heatmap and double dendrogram of Expression (log2) for the regulons")
+      order_rows <- substr(rownames(t_heat_clust),1,1)
+      print(order_rows)
+
+      
+      print(rownames(t_heat_clust))
+
+      scheme <- c("Missense","Nonsense","In_Frame_Del","Splice_Site","Frame_Shift_Ins","Frame_Shift_Del","In_Frame_Ins", "WT")
+      
+      dend <-  heatmap.2(data.matrix(t_heat_clust), scale = "column",col=bluered(100), breaks=seq(-3, 3, length.out=101),
+                         keysize = 1, Rowv=FALSE,
+                         trace = "none", density.info = "none", 
+                         key.title = "Log2 expression",RowSideColors=as.character(as.numeric(order_rows)),
+                         main = "Expression (Log2 Z-transformed) for the regulons VS mutation type",
+                         xlab = paste0("Regulons of ", "TP53", " in ", "CCLE"), 
+                         font.lab = 25,ylab = NULL, margins = c(6,22))
+      
+      legend("topright",      
+             legend =  scheme ,
+             col = unique(as.numeric(order_rows)), 
+             lty= 1,             
+             lwd = 10,           
+             cex=2.5
+      )
+      
+      
+      #dend <-  heatmap.2(data.matrix(t_heat_clust), scale = "column",col=bluered(100), breaks=seq(-3, 3, length.out=101),
+      #                   keysize = 1, Rowv=FALSE,
+      #                   trace = "none", density.info = "none", 
+      #                   key.title = "Log2 expression",
+      #                   main = "Expression (Log2 Z-transformed) for the regulons VS mutation type",
+      #                   xlab = paste0("Regulons of ", violin_gene, " in ", disease_filename[j]), 
+      #                   font.lab = 25,ylab = NULL, margins = c(6,24))
       
       print(dend)
-      # print(dend_2)
+      dev.off()
       
     }
     #******************************************************************************************************************************************
