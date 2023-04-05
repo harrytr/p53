@@ -609,7 +609,7 @@ CCLE2 <-function(disease_name,
       
 
       t_heat_clust <- t_heat_clust[ order(row.names(t_heat_clust)), ]  
-      png(file = "CCLE_HEATMAP.png",width = 3840, height = 2160)
+      #png(file = "CCLE_HEATMAP.png",width = 8, height = 11)
       
       order_rows <- substr(rownames(t_heat_clust),1,1)
       print(order_rows)
@@ -624,8 +624,8 @@ CCLE2 <-function(disease_name,
                          trace = "none", density.info = "none", 
                          key.title = "Log2 expression",RowSideColors=as.character(as.numeric(order_rows)),
                          main = "Expression (Log2 Z-transformed) for the regulons VS mutation type",
-                         xlab = paste0("Regulons of ", "TP53", " in ", "CCLE"), 
-                         font.lab = 25,ylab = NULL, margins = c(6,22))
+                         xlab = paste0("Regulons of ", violin_gene, " in ", "CCLE"), 
+                         font.lab = 40,ylab = NULL, margins = c(8,20))
       
       legend("topright",      
              legend =  scheme ,
@@ -635,17 +635,8 @@ CCLE2 <-function(disease_name,
              cex=2.5
       )
       
-      
-      #dend <-  heatmap.2(data.matrix(t_heat_clust), scale = "column",col=bluered(100), breaks=seq(-3, 3, length.out=101),
-      #                   keysize = 1, Rowv=FALSE,
-      #                   trace = "none", density.info = "none", 
-      #                   key.title = "Log2 expression",
-      #                   main = "Expression (Log2 Z-transformed) for the regulons VS mutation type",
-      #                   xlab = paste0("Regulons of ", violin_gene, " in ", disease_filename[j]), 
-      #                   font.lab = 25,ylab = NULL, margins = c(6,24))
-      
       print(dend)
-      dev.off()
+      #dev.off()
       
     }
     #******************************************************************************************************************************************
@@ -1241,7 +1232,10 @@ CCLE2 <-function(disease_name,
         stat_compare_means(method = "anova", label.y = 12, size = 8)  + 
         stat_compare_means(label.y = 15, size = 8)
         #stat_compare_means(method = "t.test",label.y = 22, size = 8) +
-        #stat_compare_means(method = "wilcox.test",label.y = 23, size = 8)
+        #stat_compare_means(method = "wilcox.test",label.y = 16, size = 8) +
+      
+        #stat_compare_means(label = "p.signif", method = "t.test",ref.group = ".all.")
+      
       
       print(sp777)
       plot_list <- c(plot_list,sp777)
