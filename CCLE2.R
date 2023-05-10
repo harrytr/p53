@@ -63,6 +63,8 @@ CCLE2 <-function(disease_name,
   source(paste0(wd,'//Carnival_opt.R'))
   source(paste0(wd,'//Carnival_opt_HYPOXIA.R'))
   source(paste0(wd,'//Carnival_opt_RAD.R'))
+  source(paste0(wd,'//Carnival_opt_HYPOXIA_L.R'))
+  source(paste0(wd,'//Carnival_opt_HYPOXIA_S.R'))
   source(paste0(wd,'//createRegulons.R'))
   source(paste0(wd,'//createRegulonList.R'))
   source(paste0(wd,'//prepare_GLM_data.R'))
