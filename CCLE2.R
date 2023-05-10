@@ -22,7 +22,7 @@ CCLE2 <-function(disease_name,
                  GLM_signature,
                  FC_user,
                  FEM_user,
-                 GLM_predict_user)  {
+                 GLM_predict_user,condition)  {
   
   
   # SHINY VERSION 
@@ -566,7 +566,7 @@ CCLE2 <-function(disease_name,
                          regulons_violin_gene,
                          FC_user,
                          surv,
-                         FEM_user,ccle_iterator)
+                         FEM_user,ccle_iterator,condition)
         
       }
       
@@ -1230,11 +1230,10 @@ CCLE2 <-function(disease_name,
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) +
         stat_compare_means(method = "anova", label.y = 12, size = 8)  + 
-        stat_compare_means(label.y = 15, size = 8)
+        stat_compare_means(label.y = 15, size = 8)+
         #stat_compare_means(method = "t.test",label.y = 22, size = 8) +
         #stat_compare_means(method = "wilcox.test",label.y = 16, size = 8) +
-      
-        #stat_compare_means(label = "p.signif", method = "t.test",ref.group = ".all.")
+        stat_compare_means(label = "p.signif", method = "t.test",ref.group = ".all.")
       
       
       print(sp777)

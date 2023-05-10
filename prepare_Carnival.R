@@ -23,7 +23,7 @@ prepare_Carnival <- function(mapk_data,
                              rgenes_e,
                              eXML_dir,
                              reg_type,
-                             key,genes_HGNC_bkp,regulons_violin_gene,FC_user,surv,FEM_user,ccle_iterator)
+                             key,genes_HGNC_bkp,regulons_violin_gene,FC_user,surv,FEM_user,ccle_iterator,condition)
 
 {
   radar_plot_data <<- as.data.frame(matrix(data = , nrow = 1+length(TCGA_disease), ncol = 17))
@@ -77,37 +77,74 @@ prepare_Carnival <- function(mapk_data,
     write.csv(mapk_data_carnival,"Carnival_EM.csv")
     df_EM <- df_EM[,-1]
     
-  #  Carnival_opt_res <- Carnival_opt_RAD(df_EM,
-  #                                       results_dir,
-  #                                       inputs_dir,
-  #                                       disease_filename[j],
-  #                                       violin_gene,
-  #                                       cloned,
-  #                                       GAP,
-  #                                       cpu_threads,
-  #                                       network_similarity_threshold,
-  #                                       top_user,
-  #                                       hotspots,
-  #                                       top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user)
+    if (condition=="Normal") {
+      
+      Carnival_opt_res <- Carnival_opt_RAD(df_EM,
+                                           results_dir,
+                                           inputs_dir,
+                                           disease_filename[j],
+                                           violin_gene,
+                                           cloned,
+                                           GAP,
+                                           cpu_threads,
+                                           network_similarity_threshold,
+                                           top_user,
+                                           hotspots,
+                                           top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user)
+      
+    }
+    else if (condition == "Radiation" ) {
+      
+      Carnival_opt_res <- Carnival_opt(ccle_iterator,df_EM,
+                                       results_dir,
+                                       inputs_dir,
+                                       disease_filename[j],
+                                       violin_gene,
+                                       cloned,
+                                       GAP,
+                                       cpu_threads,
+                                       network_similarity_threshold, 
+                                       top_user,
+                                       hotspots,
+                                       top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user,load_other,radar_plot_data)
+    }
+    else if (condition == "Hypoxia_Large" ) {
+      Carnival_opt_res <- Carnival_opt_HYPOXIA_L(df_EM,
+                                                 results_dir,
+                                                 inputs_dir,
+                                                 disease_filename[j],
+                                                 violin_gene,
+                                                 cloned,
+                                                 GAP,
+                                                 cpu_threads,
+                                                 network_similarity_threshold,
+                                                 top_user,
+                                                 hotspots,
+                                                 top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user)
+      
+    }
     
-   Carnival_opt_res <- Carnival_opt(ccle_iterator,df_EM,
-                                   results_dir,
-                                   inputs_dir,
-                                   disease_filename[j],
-                                   violin_gene,
-                                   cloned,
-                                   GAP,
-                                   cpu_threads,
-                                   network_similarity_threshold, 
-                                   top_user,
-                                   hotspots,
-                                   top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user,load_other,radar_plot_data)
+    else if (condition == "Hypoxia_Small" ) {
+      Carnival_opt_res <- Carnival_opt_HYPOXIA_S(df_EM,
+                                                 results_dir,
+                                                 inputs_dir,
+                                                 disease_filename[j],
+                                                 violin_gene,
+                                                 cloned,
+                                                 GAP,
+                                                 cpu_threads,
+                                                 network_similarity_threshold,
+                                                 top_user,
+                                                 hotspots,
+                                                 top_score,genes_HGNC_bkp,regulons_violin_gene,FC_user)
+      
+      
+    }
+    # CASE TCGA :
   }
-  
-  # CASE TCGA :
   else 
   {
-
+    
     for (i in 1:length(TCGA_disease)) {
       print("Starting iterator...")
       carnival_path_1 <- paste0(results_dir, "/", TCGA_disease[i])
@@ -394,7 +431,7 @@ prepare_Carnival <- function(mapk_data,
         
         resDir <- eXML_dir
         print("    Trying Generalized Linear Regression Modelling with TCGA ...")
-
+        
         try(glregression <- MNR("regression.rds", 50, "TCGA",
                                 reg_type, resDir, "alternative",key))
         stop()
@@ -446,7 +483,7 @@ prepare_Carnival <- function(mapk_data,
         
         write.csv(df_EM,paste0("Carnival_EM_","TCGA_disease[i].csv"))
         
-
+        
         try(
           Carnival_opt_res <- Carnival_opt(i,df_EM,
                                            results_dir,
@@ -470,7 +507,7 @@ prepare_Carnival <- function(mapk_data,
         # process results
         sim_length <- length(network_similarity_threshold)
         carnival_csv <- as.data.frame(matrix(nrow=length(disease_filename)*(length(Carnival_opt_res)-1), ncol= 1 + sim_length))
-
+        
         
         #############################################
         # for (iii  in 1:(length(Carnival_opt_res)-1)*j)
@@ -488,7 +525,7 @@ prepare_Carnival <- function(mapk_data,
         #############################################
         
         
-      #  write.csv(carnival_csv,paste0(results_dir,"//carnival_summary.csv"))
+        #  write.csv(carnival_csv,paste0(results_dir,"//carnival_summary.csv"))
       }
     }
     

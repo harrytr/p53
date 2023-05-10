@@ -3,7 +3,7 @@ options(warn=-1)
 #.libPaths( c( .libPaths(),lib_dir ) )
 # p.R175H,p.R248Q,p.R273H,p.R248W, p.R273C, p.R282W, p.G245S
 # R175H,R248Q,R273H,R248W,R273C,R282W,G245S
-#p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S
+# p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S
 # R175H|R248Q|R273H|R248W|R273C|R282W|G245S
   
 print("Loading libraries required...")
@@ -68,15 +68,16 @@ ui <- fluidPage(
       
       tags$hr(style="border-color: blue;"),
       checkboxInput("CARNIVAL_flag", label = "Run CARNIVAL optimization", FALSE),
+      selectInput("conditions", "Select condition (normal, hypoxia, radiation):", choice = c("Normal","Hypoxia_Small","Hypoxia_Large","Radiation"), selected = "Normal"),
       textInput("top", "Number of top measurements from Dorothea to use (0 = all):", 0),
       checkboxInput("FEM_flag", label = "Use whole expression matrix?", FALSE),
       checkboxInput("FC_flag", label = "Use fold-change (WT control) in expression input?", FALSE),
       textInput("milp_gap", "CPLEX MILP OPTIMALITY GAP:", 0.05),
       textInput("cpu", "Number of threads to use with CPLEX:", 2),
       textInput("score_user", "Set cut-off similarity score to save networks [0-1]:", 0.8),
-      textInput("hotspots_user", "Input the mutation hotspots (protein change, watch naming as different in CCLE/TCGA):", "p.R175H|p.R248Q|p.R273H|p.R248W|p.R273C|p.R282W|p.G245S"),
+      textInput("hotspots_user", "Input the mutation hotspots (protein change, watch naming as different in CCLE/TCGA):", "p.R175H,p.R248Q,p.R273H,p.R248W, p.R273C, p.R282W, p.G245S"),
       tags$hr(style="border-color: blue;"),
-      checkboxInput("GLM_flag", label = "Perform Generalized Linear Regression", TRUE),
+      checkboxInput("GLM_flag", label = "Perform Generalized Linear Regression", FALSE),
       radioButtons(inputId="GLM", label="GLM options:", 
                    choices=list("Run Binomial Regression" = 1,"Run Multinomial Regression" = 2),selected = 1),
       
@@ -94,7 +95,7 @@ ui <- fluidPage(
       
       radioButtons(inputId="choice2", label="Select mode for TCGA:", 
                    choices=list("Run for only for the selected subtype" = 1, 
-                                "Run pancancer in single run" = 2,"Run per disease type (Carnival)" = 3),selected = 3),
+                                "Run pancancer in single run" = 2,"Run per disease type (Carnival)" = 3),selected = 2),
       
       
       #checkboxInput("disease_based", label = "Run TCGA pancancer based on disease", FALSE),
@@ -159,6 +160,9 @@ server <- function(input, output,session) {
     
     shinyjs::toggleState("cpu", input$CARNIVAL_flag == "TRUE")
     shinyjs::toggleState("score_user", input$CARNIVAL_flag == "TRUE")
+    shinyjs::toggleState("conditions", input$CARNIVAL_flag == "TRUE")
+    
+    shinyjs::toggleState("FEM_flag", input$CARNIVAL_flag == "TRUE")
     
     #shinyjs::toggleState("load_other_user", input$CARNIVAL_flag == "TRUE")
     
@@ -208,6 +212,7 @@ server <- function(input, output,session) {
     else{ 
       hotspots_default <- c("p.R175H","p.R248Q","p.R273H","p.R248W", "p.R273C", "p.R282W", "p.G245S")
     }
+    condition <- input$conditions
     
     dataset_version <- input$dataset_version_u
     GAP <- as.numeric(input$milp_gap)
@@ -286,7 +291,7 @@ server <- function(input, output,session) {
                          GAP,
                          threads,
                          sig_user,
-                         load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                         load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           
           setwd(working_directory)
           stopApp(returnValue = invisible())
@@ -305,7 +310,7 @@ server <- function(input, output,session) {
                          GAP,
                          threads,
                          sig_user,
-                         load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                         load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           
           setwd(working_directory)
           stopApp(returnValue = invisible())
@@ -326,7 +331,7 @@ server <- function(input, output,session) {
                        GAP,
                        threads,
                        sig_user,
-                       load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                       load_other,top_user,TCGA_disease,run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
         
         setwd(working_directory)
         stopApp(returnValue = invisible())
@@ -343,14 +348,14 @@ server <- function(input, output,session) {
         if (input$GLM == 1) {
           v$res <- CCLE2( "all_cell_lines", input$violin_gene, TRUE, "binomial",c_flag,M_flag, M2_flag,GLM_all,
                           new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           setwd(working_directory)
           stopApp(returnValue = invisible())
         }
         else {
           v$res <- CCLE2( "all_cell_lines", input$violin_gene, TRUE, "multinomial",c_flag,M_flag, M2_flag,GLM_all,
                           new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           setwd(working_directory)
           stopApp(returnValue = invisible())
           
@@ -359,7 +364,7 @@ server <- function(input, output,session) {
       else {
         v$res <- CCLE2( "all_cell_lines", input$violin_gene, FALSE, "multinomial",c_flag,M_flag, M2_flag,GLM_all,
                         new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                        run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                        run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
         setwd(working_directory)
         stopApp(returnValue = invisible())
       }
@@ -372,14 +377,14 @@ server <- function(input, output,session) {
         if (input$GLM == 1) {
           v$res <- CCLE2( "all", input$violin_gene, TRUE, "binomial",c_flag,M_flag, M2_flag,GLM_all,
                           new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           setwd(working_directory)
           stopApp(returnValue = invisible())
         }
         else {
           v$res <- CCLE2( "all", input$violin_gene, TRUE, "multinomial",c_flag,M_flag, M2_flag,GLM_all,
                           new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                          run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
           setwd(working_directory)
           stopApp(returnValue = invisible())
           
@@ -388,7 +393,7 @@ server <- function(input, output,session) {
       else {
         v$res <- CCLE2( "all", input$violin_gene, FALSE, "binomial",c_flag,M_flag, M2_flag,GLM_all,
                         new_version,dataset_version,GAP,threads,sig_user,load_other,top_user,TCGA_disease,
-                        run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user)
+                        run_all_TCGA,hotspot_user,TCGA_choice,key,top_score,load_other_GLM,GLM_signature,FC_user,FEM_user,GLM_predict_user,condition)
         setwd(working_directory)
         stopApp(returnValue = invisible())
       }
