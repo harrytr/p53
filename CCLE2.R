@@ -196,7 +196,7 @@ CCLE2 <-function(disease_name,
   list.of.packages <- c("dplyr","ggplot2","ggrepel","ggpubr","viridis","tibble","stringr",
                         "corrplot","tidyverse","igraph","visNetwork", "data.table", "CARNIVAL",
                         "viper", "CellNOptR", "OmnipathR", "stringi","openxlsx",
-                        "sna", "gplots","ggfortify","limma", "UpSetR","survival", "survminer","ggcorrplot")# "edgeR",
+                        "sna", "gplots","ggfortify","limma", "UpSetR","survival", "survminer","ggcorrplot","rstatix")# "edgeR",
   
   invisible(lapply(list.of.packages, library, character.only = TRUE))
   
@@ -1256,8 +1256,8 @@ CCLE2 <-function(disease_name,
       dodge <- position_dodge(width = .4)
       main7 = paste0("Violin and boxplots of WT vesus Mutant expression levels and types for ", violin_gene, " in all cell lines",
                      " \n (source data-sets: DepMap Public  ", dataset_version, ")")
-      
-      
+      my_comparisons <- list(  c("Missense","Nonsense","In_Frame_Del","Splice_Site","Frame_Shift_Ins","Frame_Shift_Del","In_Frame_Ins", "WT"))
+      scheme <- c("Missense","Nonsense","In_Frame_Del","Splice_Site","Frame_Shift_Ins","Frame_Shift_Del","In_Frame_Ins", "WT")
       sp77 <- ggplot(data = total,aes(x = Variant_Classification, y = Expression_log2, fill = Variant_Classification))+
         #scale_fill_viridis_d( option = "D")+
         geom_boxplot(width=.1,notch = FALSE,  outlier.size = 0, color="black",lwd=1.2, alpha = 0.7, position = dodge) +
@@ -1276,11 +1276,21 @@ CCLE2 <-function(disease_name,
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) +
         stat_compare_means(method = "anova", label.y = 20, size = 5)  + 
-        stat_compare_means(label.y = 21, size = 5)
+        stat_compare_means(label.y = 21, size = 5)# + 
+        #stat_compare_means(label = "p.signif", method = "t.test", ref.group = ".all.", label.y=20, size = 5)
       
       print(sp77)
       plot_list <- c(plot_list,sp77)
       ggsave(filename="CCLE.png", plot=sp77)
+      
+      
+      model <- aov(Expression_log2~Variant_Classification, data=total)
+      TM <- TukeyHSD(model, conf.level=.95)
+      GH <-games_howell_test(total, Expression_log2~Variant_Classification, conf.level = 0.95, detailed = FALSE)
+      print(TM)
+      print(GH)
+      
+      
     }
     
     if (!is.null(violin_column)) {

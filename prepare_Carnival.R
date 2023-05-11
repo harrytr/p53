@@ -291,6 +291,13 @@ prepare_Carnival <- function(mapk_data,
       ggsave(filename="TCGA.png", plot=sptcga77)
       
       
+      model <- aov(log2(Expression_log2+1)~Variant_Classification, data=cloned_violin)
+      TM <- TukeyHSD(model, conf.level=.95)
+      #GH <-games_howell_test(cloned_violin, log2(Expression_log2+1)~Variant_Classification, conf.level = 0.95, detailed = FALSE)
+      
+      print(TM)
+      #print(GH)
+
       dodge <- position_dodge(width = .4)
       main7 = paste0("Violin and boxplots of WT vesus Mutant expression levels for ", violin_gene, " in TCGA ", TCGA_disease[i])
       cloned_violin  <- mutate(cloned_violin, isHotspot = ifelse(Protein_Change %in% hotspots, TRUE, FALSE))
