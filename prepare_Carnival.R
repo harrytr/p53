@@ -367,7 +367,7 @@ prepare_Carnival <- function(mapk_data,
       #cloned_violin <- cloned_violin[!is.na(cloned_violin$CN),]
       sptcga777 <- ggplot(data = cloned_violin,aes(x = State, y = log2(Expression_log2+1), fill = GYSTIC_CALLS))+
         #scale_fill_viridis_d( option = "D")+
-        geom_boxplot(width=.1,notch = FALSE,  outlier.size = 0, color="black",lwd=1.2, alpha = 0.7, position = dodge) +
+        geom_boxplot(width=.1,notch = TRUE,  outlier.size = 0, color="black",lwd=1.2, alpha = 0.7, position = dodge) +
         geom_point(shape = 21,size=2, position = dodge, color="black",alpha=1) +
         #geom_label_repel(aes(label=total$cell_lines),
         #                 box.padding   = 0.5,

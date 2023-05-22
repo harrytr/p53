@@ -1217,7 +1217,7 @@ CCLE2 <-function(disease_name,
  
       sp777 <- ggplot(data = total2,aes(x = State,y = Expression_log2, fill = GYSTIC_CALLS))+
         #scale_fill_viridis_d( option = "D")+
-        geom_boxplot(width=.1,notch = FALSE,  outlier.size = 0, color="black",lwd=1.2, alpha = 0.7, position = dodge) +
+        geom_boxplot(width=.1,notch = TRUE,  outlier.size = 0, color="black",lwd=1.2, alpha = 0.7, position = dodge) +
         geom_point(shape = 21,size=2, position = dodge, color="black",alpha=1) +
         #geom_label_repel(aes(label=total$cell_lines),
         #                 box.padding   = 0.5,
@@ -1232,10 +1232,13 @@ CCLE2 <-function(disease_name,
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) +
         stat_compare_means(method = "anova", label.y = 12, size = 8)  + 
-        stat_compare_means(label.y = 15, size = 8)+
-        #stat_compare_means(method = "t.test",label.y = 22, size = 8) +
-        #stat_compare_means(method = "wilcox.test",label.y = 16, size = 8) +
-        stat_compare_means(label = "p.signif", method = "t.test",ref.group = ".all.")
+        stat_compare_means(label.y = 15, size = 8)
+      
+        #stat_compare_means(method = "anova", label.y = 12, size = 8)  + 
+        #stat_compare_means(label.y = 14, size = 8)+
+        #stat_compare_means(method = "t.test",label.y = 16, size = 8) +
+        #stat_compare_means(method = "wilcox.test",label.y = 18, size = 8) +
+        #stat_compare_means(method = "t.test",label.y = 20, size = 8, ref.group = ".all.")
       
       
       print(sp777)
