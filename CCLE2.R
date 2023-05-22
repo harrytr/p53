@@ -1167,10 +1167,10 @@ CCLE2 <-function(disease_name,
         font("legend.text",size = 20) +
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) +
-        stat_compare_means(method = "anova", label.y = 20, size = 5)  + 
-        stat_compare_means(label.y = 21, size = 5) +
-        stat_compare_means(method = "t.test",label.y = 22, size = 5) +
-        stat_compare_means(method = "wilcox.test",label.y = 23, size = 5)
+        #stat_compare_means(method = "anova", label.y = 20, size = 5)  + 
+        #stat_compare_means(label.y = 21, size = 5) +
+        stat_compare_means(method = "t.test",label.y = 12, size = 7) +
+        stat_compare_means(method = "wilcox.test",label.y = 14, size = 7)
         
       print(sp777)
       plot_list <- c(plot_list,sp777)
@@ -1198,10 +1198,10 @@ CCLE2 <-function(disease_name,
         font("legend.text",size = 20) +
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) +
-        stat_compare_means(method = "anova", label.y = 20, size = 5)  + 
-        stat_compare_means(label.y = 21, size = 5) +
-        stat_compare_means(method = "t.test",label.y = 22, size = 5) +
-        stat_compare_means(method = "wilcox.test",label.y = 23, size = 5)
+        #stat_compare_means(method = "anova", label.y = 20, size = 5)  + 
+        #stat_compare_means(label.y = 21, size = 5) +
+        stat_compare_means(method = "t.test",label.y = 12, size = 7) +
+        stat_compare_means(method = "wilcox.test",label.y = 14, size = 7)
       
       print(sp777)
       plot_list <- c(plot_list,sp777)

@@ -320,10 +320,10 @@ prepare_Carnival <- function(mapk_data,
         font("legend.text",size = 20) +
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) + 
-        stat_compare_means(method = "anova", label.y = 20, size = 8)  + 
-        stat_compare_means(label.y = 21, size = 8) +
-        stat_compare_means(method = "t.test",label.y = 22, size = 8) +
-        stat_compare_means(method = "wilcox.test",label.y = 23, size = 8)
+        #stat_compare_means(method = "anova", label.y = 20, size = 8)  + 
+        #stat_compare_means(label.y = 21, size = 8) +
+        stat_compare_means(method = "t.test",label.y = 14, size = 7) +
+        stat_compare_means(method = "wilcox.test",label.y = 15, size = 7)
       
       print(sptcga777)
       
@@ -351,10 +351,10 @@ prepare_Carnival <- function(mapk_data,
         font("legend.text",size = 20) +
         theme(axis.text.x=element_text(size=25, angle=90,hjust=0.95,vjust=0.02))+
         ggtitle(main7) + 
-        stat_compare_means(method = "anova", label.y = 20, size = 8)  + 
-        stat_compare_means(label.y = 21, size = 8) +
-        stat_compare_means(method = "t.test",label.y = 22, size = 8) +
-        stat_compare_means(method = "wilcox.test",label.y = 23, size = 8)
+        #stat_compare_means(method = "anova", label.y = 20, size = 8)  + 
+        #stat_compare_means(label.y = 21, size = 8) +
+        stat_compare_means(method = "t.test",label.y = 14, size = 7) +
+        stat_compare_means(method = "wilcox.test",label.y = 15, size = 7)
       
       print(sptcga777)
       ggsave(filename="TCGA_WT_MT_isDel.png", plot=sptcga777)
