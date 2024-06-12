@@ -25,6 +25,7 @@ Volume 26, Issue 12,
 ISSN 2589-0042,
 https://doi.org/10.1016/j.isci.2023.108291.
 (https://www.sciencedirect.com/science/article/pii/S2589004223023684)
+
 Abstract: Summary
 TP53, the Guardian of the Genome, is the most frequently mutated gene in human cancers and the functional characterization of its regulation is fundamental. To address this we employ two strategies: machine learning to predict the mutation status of TP53 from transcriptomic data, and directed regulatory networks to reconstruct the effect of mutations on the transcipt levels of TP53 targets. Using data from established databases (Cancer Cell Line Encyclopedia, The Cancer Genome Atlas), machine learning could predict the mutation status, but not resolve different mutations. On the contrary, directed network optimization allowed to infer the TP53 regulatory profile across: (1) mutations, (2) irradiation in lung cancer, and (3) hypoxia in breast cancer, and we could observe differential regulatory profiles dictated by (1) mutation type, (2) deleterious consequences of the mutation, (3) known hotspots, (4) protein changes, (5) stress condition (irradiation/hypoxia). This is an important first step toward using regulatory networks for the characterization of the functional consequences of mutations, and could be extended to other perturbations, with implications for drug design and precision medicine.
 Keywords: Regulatory networks; directed networks; causal inference; mutations; cancer systems biology; machine learning; TP53; trascriptomics; regulon
